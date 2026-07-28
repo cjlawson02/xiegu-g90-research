@@ -1,0 +1,8 @@
+{"step_i":1,"label":"baseline USB","mode":"USB","freq_hz":14225000,"Po":0}
+{"step_i":2,"label":"mode → LSB","mode":"LSB","freq_hz":14225000,"Po":0}
+{"step_i":3,"label":"mode → CW","mode":"CW","freq_hz":14225000,"Po":0}
+{"step_i":4,"label":"mode → USB","mode":"USB","freq_hz":14225000,"Po":0}
+{"step_i":5,"label":"filter → 500","mode":"USB","freq_hz":14225000,"Po":0}
+{"step_i":6,"label":"filter → 3200","mode":"USB","freq_hz":14225000,"Po":0}
+{"step_i":7,"label":"freq → 7.030","mode":"USB","freq_hz":7030000,"Po":0}
+{"step_i":8,"label":"freq → 14.225","mode":"USB","freq_hz":14225000,"Po":0}

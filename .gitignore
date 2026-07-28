@@ -1,0 +1,40 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Packaging
+*.egg-info/
+.eggs/
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Test / coverage
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Captures and local lab output
+captures/
+*.bin
+!tests/fixtures/**
+
+# Secrets / gray material (never commit)
+**/*.aeskey
+**/decrypted/
+reference/g90-fw/
+analysis/

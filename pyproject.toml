@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xiegu-g90"
+version = "0.1.0"
+description = "Open tools and protocol documentation for the Xiegu G90 display↔body link (v1.81)."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Chris Lawson" }]
+keywords = ["ham-radio", "xiegu", "g90", "gsoc", "reverse-engineering", "protocol"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Communications :: Ham Radio",
+]
+dependencies = []
+
+[project.optional-dependencies]
+serial = ["pyserial>=3.5"]
+viz = ["pyqtgraph>=0.13", "PyQt6>=6.4", "numpy>=1.24", "Pillow>=9.0"]
+dev = ["pytest>=7.4", "ruff>=0.4"]
+all = ["xiegu-g90[serial,viz,dev]"]
+
+[project.urls]
+Homepage = "https://github.com/cjlawson02/xiegu-g90-research"
+Repository = "https://github.com/cjlawson02/xiegu-g90-research"
+Issues = "https://github.com/cjlawson02/xiegu-g90-research/issues"
+
+[project.scripts]
+g90-decode = "g90_codec.cli.decode:main"
+g90-sniff = "g90_codec.cli.sniff:main"
+g90-live-head = "g90_control.cli.live_head:main"
+g90-live-civ = "g90_control.cli.live_civ:main"
+g90-effect-diff = "g90_control.cli.effect_diff:main"
+g90-live-fft = "g90_control.cli.live_fft:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+g90_codec = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
