@@ -39,6 +39,8 @@ g90-live-head = "g90_control.cli.live_head:main"
 g90-live-civ = "g90_control.cli.live_civ:main"
 g90-effect-diff = "g90_control.cli.effect_diff:main"
 g90-live-fft = "g90_control.cli.live_fft:main"
+g90-fft-parse = "g90_control.cli.fft_parse:main"
+g90-band-scan = "g90_control.cli.band_scan:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -22,7 +22,7 @@ knobs are ears-only.
 
 ``--save DIR`` writes every CRC-ok body (``.bin``/``.hex``) plus ``manifest.jsonl``
 (step label, header 13–47 nonzeros) — needed to fixture-back the lab
-``0x45 0x20`` @32–39 march (H4).
+``0x45 0x20`` @32–39 march in header bytes 13–47 (**O1**).
 
 See ``docs/bench-setup.md``.
 """
@@ -143,7 +143,7 @@ EXTENDED_STEPS: tuple[Step, ...] = (
         7_030_000,
         2700,
         200,
-        "longer look at hdr13-47 / FFT (H4); still RX-only",
+        "longer look at header bytes 13–47 / FFT; still RX-only",
     ),
 )
 
@@ -1111,7 +1111,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--save",
         metavar="DIR",
-        help="save every CRC-ok body (.bin/.hex) + manifest.jsonl (H4 re-capture)",
+        help="save every CRC-ok body (.bin/.hex) + manifest.jsonl (header 13–47 fixture re-capture)",
     )
     ap.add_argument("--list-ports", action="store_true")
     args = ap.parse_args(argv)

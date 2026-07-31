@@ -9,7 +9,7 @@ read **Compatibility** if you are tracing the GSOC firmware cliff.
 | Document                              | Description                            |
 | ------------------------------------- | -------------------------------------- |
 | [Getting started](getting-started.md) | Install, run tests, first commands     |
-| [Bench setup](bench-setup.md)         | DE-9 wiring, fake-head, safety         |
+| [Bench setup](bench-setup.md)         | DE-9 wiring, fake-head, safety, FFT bench summary |
 | [Compatibility](compatibility.md)     | Why the GSOC breaks and what we target |
 | [Glossary](glossary.md)               | fake-head, profiles, tiers, Po, Y-tap  |
 | [Implementing](implementing.md)       | Fork tracks: DE-9, CI-V/Hamlib, GSOC   |
@@ -23,3 +23,4 @@ read **Compatibility** if you are tracing the GSOC firmware cliff.
 | [Control spec (frozen v1)](protocol/control-spec.md)   | Normative behavior for implementers         |
 | [CI-V (CAT)](protocol/civ.md)                          | DispUnit User jack usage and quirks         |
 | [Verification matrix](verification.md)                 | What CI, fixtures, bench, and RE each prove |
+| [FFT bench (optional)](fft-bench.md)                   | Hz/bin, ATT relative, generator appendix    |

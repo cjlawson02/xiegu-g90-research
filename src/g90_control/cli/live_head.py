@@ -44,6 +44,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--freq", type=int, default=14_225_000)
     ap.add_argument("--filter-high", type=int, default=2700)
     ap.add_argument("--filter-low", type=int, default=200)
+    ap.add_argument(
+        "--sql-level",
+        type=int,
+        default=0,
+        metavar="0-255",
+        help="head byte 45 squelch (0=off, default)",
+    )
     ap.add_argument("--list-ports", action="store_true")
     args = ap.parse_args(argv)
 
@@ -82,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
                     freq_hz=args.freq,
                     filter_high_hz=args.filter_high,
                     filter_low_hz=args.filter_low,
+                    sql_level=args.sql_level,
                 )
                 tx_ok += 1
                 if save_dir is not None and n == 1:

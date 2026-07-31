@@ -6,9 +6,9 @@ a scrolling waterfall.
 Y units (``--units``):
   raw   — wire uint16 as-is
   log   — log1p(raw)
-  dbm   — GSOC remote display proxy ``y = −110 + 1.2 × (int16)bin``
-          (scope.md H5-A). Vendor UI scale, **not** live-calibrated absolute
-          dBm (H5 residual still needs a known-level injector).
+  dbm   — GSOC display dB proxy ``y = −110 + 1.2 × (int16)bin`` (see
+          ``display_db_proxy`` in ``fft_bench.py``). Vendor UI scale, **not**
+          live-calibrated absolute dBm (**O2** open per control-spec).
 
 Modes:
   --port …     Live fake-head TX/RX (stock head UNPLUGGED; same wiring as
@@ -21,7 +21,7 @@ Modes:
 Requires: pyqtgraph, PyQt6|PySide6|PyQt5, numpy, Pillow (optional tooling —
 not needed for selftest).
 
-See docs/bench-setup.md and docs/verification.md (H5 — dBm not calibrated).
+See docs/bench-setup.md and docs/verification.md (absolute dBm **O2** open).
 """
 
 from __future__ import annotations
@@ -68,10 +68,10 @@ _MODE_FILTER = {
 _SPAN_HZ = 48_000.0
 _HZ_PER_BIN = _SPAN_HZ / _N_BINS
 _WF_ROWS = 240
-# GSOC sa_render remote branch (H5-A): DAT_00035df8=1.2f, DAT_00035dfc=−110.f
+# GSOC display dB proxy: −110 + 1.2×(int16)bin (matches display_db_proxy).
 _GSOC_DBM_SLOPE = 1.2
 _GSOC_DBM_OFFSET = -110.0
-# GSOC empty/guard prefill (H5-B) — useful Y-axis floor hint only.
+# GSOC empty/guard prefill — useful Y-axis floor hint only.
 _GSOC_DBM_FLOOR = -145.0
 # Fixed scope/waterfall panes (no frame-to-frame autoscale).
 _FIXED_Y = {
@@ -143,7 +143,7 @@ def _y_label(units: str) -> str:
 
 def _window_title(units: str) -> str:
     if units == "dbm":
-        return "G90 remote FFT (DE-9) — GSOC dB proxy (H5-A; not live-cal)"
+        return "G90 remote FFT (DE-9) — GSOC display dB proxy (not live-cal)"
     return "G90 remote FFT (DE-9) — not dBm / not IQ SDR"
 
 
@@ -257,7 +257,7 @@ def _chrome(
         att_name = ("none", "pre", "att")[att_mode] if att_mode in (0, 1, 2) else str(att_mode)
         bits.append(f"ATT={att_name}")
     if units == "dbm":
-        bits.append("[H5-A proxy]")
+        bits.append("[display dB proxy]")
     base = "  ".join(bits)
     return f"{base}  |  {extra}" if extra else base
 
@@ -972,7 +972,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--dbm",
         action="store_true",
-        help="alias for --units dbm (GSOC H5-A proxy)",
+        help="alias for --units dbm (GSOC display dB proxy; O2 not closed)",
     )
     ap.add_argument(
         "--ymin",

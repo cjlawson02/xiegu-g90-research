@@ -78,6 +78,28 @@ g90-effect-diff --port /dev/cu.usbserial-XXX --extended
 **PASS** requires header and FFT deltas from `g90-effect-diff`, not only
 CRC-valid replies.
 
+## FFT bench (optional)
+
+No RF generator required for **Hz/bin** or **ATT relative** checks. Uses
+on-air signals and fake-head VFO / `att_mode` in the head frame.
+
+| Step | Tool | Notes |
+|------|------|-------|
+| Hz/bin ±10 kHz VFO | `g90-fft-parse --expect-offset-hz` | ~300 Hz/bin expected |
+| Band noise ranking | `g90-band-scan` | Display dB proxy (`dB~`) |
+| ATT `att_mode` 0 vs 2 | `g90-live-head` / `g90-effect-diff --extended` | Direction check |
+| Live waterfall | `g90-live-fft --dbm` | Eyes-on sanity |
+
+Bench **2026-07-31** (v1.81, FT8 7.073 MHz): Hz/bin median **~298**; ATT peak
+u16 **42→29**. Fixtures: `tests/fixtures/fft_bench/`. Full procedure:
+[**FFT bench**](fft-bench.md).
+
+```sh
+g90-live-head --profile 1.81 --port /dev/cu.usbserial-XXX \
+  --mode USB --freq 7073000 --sql-level 0 --count 10 --save captures/fft-vfo
+g90-fft-parse --hex-file captures/fft-vfo/body_000.hex --label baseline
+```
+
 ## Passive sniff (optional)
 
 With stock head **still connected**, RX-only tap on pin 2:
@@ -116,8 +138,13 @@ Bench session **2026-07-27** — see [verification.md](verification.md) for tier
 - CI-V freq/mode/meters on DispUnit User jack *(B fixtures + C live)*
 - Remote FFT/waterfall from body link bins *(B replay + C live)*
 
+Bench session **2026-07-31** — FFT on fake-head (no generator):
+
+- Hz/bin **~298** via VFO ±10 kHz (`g90-fft-parse`) *(B fixtures + C live)*
+- ATT relative: wire peak drops with `att_mode` 2 vs 0 *(B fixtures + C live)*
+
 Not claimed here: stock-head UI field-for-field match (Y-tap), absolute dBm
-calibration, or “GSOC fixed.”
+(**O2** open — generator appendix in [fft-bench.md](fft-bench.md)), or “GSOC fixed.”
 
 ## Troubleshooting
 

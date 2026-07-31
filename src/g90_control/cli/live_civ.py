@@ -122,6 +122,13 @@ def main() -> int:
         action="store_true",
         help="print 0x14 level snapshot (AF/SQL/power/…)",
     )
+    ap.add_argument(
+        "--set-sql",
+        type=lambda s: int(s, 0) & 0xFF,
+        default=None,
+        metavar="0-255",
+        help="set squelch level via 0x14/0x03 (0 = off)",
+    )
     args = ap.parse_args()
 
     if args.list_ports:
@@ -151,7 +158,11 @@ def main() -> int:
         meters.append(meter_names[tok])
 
     port = resolve_port(args.port)
-    writing = args.set_freq is not None or args.set_mode is not None
+    writing = (
+        args.set_freq is not None
+        or args.set_mode is not None
+        or args.set_sql is not None
+    )
     print(
         f"CI-V  port={port}  baud={args.baud}  "
         f"radio=0x{args.addr:02X}  ctrl=0x{args.controller:02X}",
@@ -195,6 +206,9 @@ def main() -> int:
                         f"verify {mode_name(got_m)} filt=0x{(got_f or 0):02X}",
                         flush=True,
                     )
+                if args.set_sql is not None:
+                    got = civ.set_sql(args.set_sql)
+                    print(f"set-sql {args.set_sql} → ack/read {got}", flush=True)
                 after = civ.poll(meters=meters)
                 print(f"after   {after.summary()}", flush=True)
                 if after.po not in (None, 0):

@@ -2,7 +2,7 @@
 
 Table of claims with tier (A–E), test or fixture name, and how to reproduce.
 
-**CI gate:** `pytest tests/` (54 tests) + `scripts/publish_scrub_check.py
+**CI gate:** `pytest tests/` (61 tests) + `scripts/publish_scrub_check.py
 --publish`. Neither runs live radio hardware. The scrub check fails on tracked
 vendor firmware (``.xgf``, ``gsoc_app``), AES keys, decompilation dumps, and
 related path/content heuristics — see the script docstring for modes.
@@ -46,7 +46,8 @@ below says **A**.
 | Zeroping head-frame byte oracle (1.78 community captures)                     | `TestZeropingOracle`                                                  |
 | CI-V quirks C-Q1/C-Q2/C-Q4 live hex                                           | `TestCivLiveFixtures`                                                 |
 | Radio ID `00 90`; addr `0x70` reply                                           | `TestCivLiveFixtures`                                                 |
-| Level read: non-BCD bytes (e.g. `0x7D`) decode without error (C-Q3 read path) | `test_encode_level_split_vfo` (synthetic; set path not live-fixtured) |
+| FFT Hz/bin marker (`g90-fft-parse`, synthetic)                             | `TestFftBenchHelpers` in `tests/test_fft_bench.py`                     |
+| FFT bench fixtures (FT8 7.073 MHz, 2026-07-31)                           | `TestFftBenchFixtures` in `tests/test_fft_bench.py`                    |
 
 ---
 
@@ -64,6 +65,8 @@ traffic**, not that your radio today will PASS the full ladder.
 | Effect-diff ladder summary (8 steps, Po=0)            | `effect_diff_manifest_20260727.jsonl`                                    |
 | Effect-diff CW `"E "` march in header                 | `body_181_effect_cw_E*.hex`                                              |
 | CI-V quirks C-Q1/C-Q2/C-Q4, radio ID, addr `0x70`     | `tests/fixtures/civ_live/*.hex`                                          |
+| FFT Hz/bin (VFO / ±10 kHz @ 7.073 MHz FT8)            | `tests/fixtures/fft_bench/body_181_fft_{vfo,plus10k,minus10k}_*.hex`     |
+| ATT relative (`att_mode` 0 vs 2, peak u16 drops)      | `tests/fixtures/fft_bench/body_181_fft_att_{off,on}_20260731.hex`        |
 
 ---
 
@@ -78,6 +81,8 @@ compatible post-1.79 body), FT232 on DE-9, and manual runs.
 | Body-effect ladder PASS (mode/freq → header + FFT deltas) | `g90-effect-diff` | Bench **2026-07-27** PASS; manifest `effect_diff_manifest_20260727.jsonl` |
 | CI-V freq/mode/meters on DispUnit User jack               | `g90-live-civ`    | Fixtures `tests/fixtures/civ_live/*.hex` (2026-07-27)                     |
 | Remote FFT/waterfall from body bins                       | `g90-live-fft`    | Replay from fixtures only in CI                                           |
+| FFT Hz/bin (~298–303 Hz/bin; bin 80 ≈ VFO)                | `g90-fft-parse`   | Bench **2026-07-31** PASS; fixtures `tests/fixtures/fft_bench/`        |
+| ATT lowers wire FFT peak (`att_mode` 0 vs 2)              | `g90-live-head`   | Bench **2026-07-31** PASS (fake-head); fixtures `fft_bench/att_*.hex` |
 
 
 ---
@@ -102,14 +107,15 @@ Xiegu ships new firmware.
 | Current G90 V1.81 (Aug 2025)              | Vendor release notes                                                        | Fixture `info6=0x81` only                    |
 | DE-9 pinout (pin 2/3/5; never pin 1 +8 V) | [zeroping headprotocol](https://github.com/zeroping/xiegu-g90-headprotocol) | None — wiring guide                          |
 | CI-V on DispUnit **User** jack @ 19200    | Live bench                                                                  | C-Q1–C-Q4 fixtures                           |
-| ~48 kHz FFT span, GSOC dBm affine         | GSOC/community                                                              | Display proxy in `g90-live-fft`; **O2** open |
+| ~48 kHz FFT span, display dB affine         | GSOC/community                                                              | Hz/bin ~298 measured (2026-07-31); `g90-live-fft --dbm` |
 
 ---
 
 ## What we explicitly do **not** claim
 
-- Stock-head UI field-for-field match (Y-tap) — optional H1b
-- Absolute FFT dBm calibration — O2 open
+- Stock-head Y-tap UI decode (optional)
+- Absolute FFT dBm calibration — **O2** open (Hz/bin + ATT direction bench-closed;
+  see `tests/fixtures/fft_bench/`)
 - “GSOC fixed” or product revival
 - Filter changes always visible in body header bytes (`g90-effect-diff` checks
   mode/freq steps; filter may not echo in bytes 13–47)

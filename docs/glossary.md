@@ -18,3 +18,14 @@ Short definitions for terms used across the bench guides and protocol docs.
 | **Tier E**                  | Community or vendor reports cited for context, not re-verified here.                                                            |
 
 Full evidence matrix: [verification.md](verification.md).
+
+## Clause IDs
+
+Normative protocol IDs (**P***, **H1**–**H7**, **B***, **C***, **S***, **O1**/**O2**,
+**C-Q***) are defined in [`protocol/control-spec.md`](protocol/control-spec.md) and
+[`protocol/civ.md`](protocol/civ.md). Cite the clause in PRs and commits when you
+touch wire behavior.
+
+In the control spec, **H5** is `fft_scale` on firmware 1.79+ (AUTO only), not FFT
+bench or display dB. Open FFT calibration gaps use **O2**; header bytes 13–47
+use **O1**.

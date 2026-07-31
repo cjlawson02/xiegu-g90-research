@@ -115,19 +115,20 @@ class LiveHeadSession:
         """Read until a CRC-valid 372-byte body frame or timeout."""
         t = self.timeout_s if timeout_s is None else timeout_s
         deadline = time.monotonic() + t
-        frame = _read_exact(self._ser, BODY_FRAME_LEN, timeout_s=min(2.0, t))
-        if frame is None:
-            return None
+        buf = bytearray()
         while time.monotonic() < deadline:
-            body = self.ctrl.decode_body(frame)
-            if body.crc_ok:
-                return frame
-            nxt = _read_exact(self._ser, 1, timeout_s=1.0)
-            if nxt is None:
-                return None
-            frame = frame[1:] + nxt
-            if len(frame) != BODY_FRAME_LEN:
-                return None
+            chunk = self._ser.read(512)
+            if chunk:
+                buf.extend(chunk)
+                # Keep a sliding window; body frames are fixed 372 bytes.
+                if len(buf) > BODY_FRAME_LEN * 4:
+                    del buf[: len(buf) - BODY_FRAME_LEN * 2]
+                for i in range(max(0, len(buf) - BODY_FRAME_LEN + 1)):
+                    frame = bytes(buf[i : i + BODY_FRAME_LEN])
+                    if self.ctrl.decode_body(frame).crc_ok:
+                        return frame
+            else:
+                time.sleep(0.002)
         return None
 
     def exchange(self, tx: bytes | None = None, **encode_kw: Any) -> ExchangeResult:

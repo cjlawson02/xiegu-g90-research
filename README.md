@@ -9,8 +9,8 @@ USB on the head is **L-D** on the body.
 
 This repo documents that break, implements the **v1.81** byte map in Python, and
 includes tools to drive a modern G90 body from a laptop when you unplug the head
-and wire in an FT232. Bench-checked on a v1.81 MainUnit **2026-07-27**; GSOC
-hardware itself is not tested here.
+and wire in an FT232. Bench-checked on a v1.81 MainUnit **2026-07-27** (control path) and **2026-07-31**
+(Hz/bin + ATT relative); GSOC hardware itself is not tested here.
 
 [![CI](https://github.com/cjlawson02/xiegu-g90-research/actions/workflows/ci.yml/badge.svg)](https://github.com/cjlawson02/xiegu-g90-research/actions/workflows/ci.yml)
 
@@ -29,6 +29,8 @@ for what each tier actually proves.
 | Body-effect proof ladder              | `g90-effect-diff`          |
 | CI-V on DispUnit User jack            | `g90-live-civ`             |
 | Remote spectrum / waterfall           | `g90-live-fft`             |
+| FFT parse (offline)                   | `g90-fft-parse`            |
+| HF band scan (fake-head)              | `g90-band-scan`            |
 
 No vendor firmware, keys, or decompilation dumps — enforced by
 `python3 scripts/publish_scrub_check.py --publish` (CI on every push).

@@ -450,8 +450,8 @@ class BodyStatus:
     """Mapped body→head header fields (see ``docs/protocol/control-spec.md`` §5).
 
     Bytes 13–19: no MainUnit writer found (fixtures stay zero). Bytes 20–47:
-    MainUnit rolling C-string (``cw_text``); head parsers still unread (H4).
-    Absolute FFT dBm is H5.
+    MainUnit rolling C-string (``cw_text``); head parsers still unread (**O1**
+    open). Absolute FFT dBm calibration is **O2** open.
     """
 
     s_meter: int  # signed byte 0
@@ -539,7 +539,7 @@ def parse_body_status(header48: bytes) -> BodyStatus:
 def fft_fingerprint(fft: bytes) -> tuple[int, int, int]:
     """Cheap FFT identity: (sum_u16, max_u16, argmax_bin).
 
-    Used by effect differentials — not calibrated dBm (H5).
+    Used by effect differentials — not calibrated dBm (**O2** open).
     """
     if len(fft) < 2:
         return (0, 0, 0)
