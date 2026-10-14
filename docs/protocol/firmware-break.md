@@ -53,13 +53,14 @@ not USB.
 | 1.79+   | `(Hz − 50) / 50`  | `(Hz − 50) / 50`  |
 
 The body indexes BPF coefficient tables by these raw bytes *(static RE — not
-correlated in `g90-effect-diff`)*. Wrong encoding → wrong filter edges even
-when frequency and mode look plausible.
+correlated in `g90-effect-diff`)*. It does not redo the ÷25 or ÷50 math.
+1.78 indexes with `raw % 237`; 1.79+ uses a 256-wide index. Wrong encoding →
+wrong filter edges even when frequency and mode look plausible.
 
 ## Spectrum zoom (`fft_scale`)
 
 - **1.78:** values 1–10 (1 = AUTO)
-- **1.79+:** forced AUTO only (wire value **1**)
+- **1.79+:** library encode is wire value **1** only (**H5**). The body still applies 1–10 and clamps 11–15 to 10. The post-clamp curve is internal and is not a new profile.
 
 ## Quiet ladder through 1.81
 
@@ -78,7 +79,8 @@ Re-check when Xiegu ships new firmware — add a new profile if the map breaks.
 
 | Finding                                    | Tier                                   | Notes                                         |
 | ------------------------------------------ | -------------------------------------- | --------------------------------------------- |
-| Mode/filter/`fft_scale` break at 1.78→1.79 | **A** (codec) + **D** (firmware RE)    | Mishap demo: `test_classic_gsoc_mishap`       |
+| Mode and filter-packing break at 1.78→1.79 | **A** (codec) + **D** (firmware RE)    | Mishap demo: `test_classic_gsoc_mishap`       |
+| `fft_scale` body still applies 1–10 after the break | **D**                         | **H5** is the library encode limit, not a body reject |
 | Transport unchanged (sizes, sync, CRC)     | **A** + **D**                          | DMA/handshake: **D** only                     |
 | Quiet ladder 1.79→1.81                     | **D** + alias tests **A**              | No per-version capture matrix in public repo  |
 | Fake-head on live MainUnit v1.81           | **B** (fixtures) + **C** (bench tools) | Not hardware-in-loop CI                       |

@@ -449,9 +449,10 @@ class DecodedHeadFrame:
 class BodyStatus:
     """Mapped body→head header fields (see ``docs/protocol/control-spec.md`` §5).
 
-    Bytes 13–19: no MainUnit writer found (fixtures stay zero). Bytes 20–47:
-    MainUnit rolling C-string (``cw_text``); head parsers still unread (**O1**
-    open). Absolute FFT dBm calibration is **O2** open.
+    Bytes 13–15 are stored as zero. Bytes 16–19 have no writer found.
+    Bytes 20–47 are a rolling C string (``cw_text``). Not a v1 semantic
+    decode (**B4** / **O1**). Head use of that window is unsettled.
+    Absolute FFT dBm is **O2**.
     """
 
     s_meter: int  # signed byte 0
@@ -482,13 +483,13 @@ class BodyStatus:
 
     @property
     def cw_text(self) -> str:
-        """NUL-terminated ASCII from header bytes 20–47 (MainUnit writer map).
+        """NUL-terminated ASCII from header bytes 20–47.
 
-        Body appends into this window (max 26 payload chars + trailing NUL on
-        overflow). Head/GSOC parsers do not read it. CW-source attribution is
-        **static-RE** (Morse LUT path); live fixtures prove the rolling window
-        only — see ``docs/verification.md`` tier D (static RE). Not a v1 freeze
-        semantic decode (convenience property name).
+        The body appends while the string is short and slides the window on
+        overflow. Live fixtures show that roll only. Morse attribution is
+        static-RE, not a v1 semantic decode (**B4** / **O1**). A literal-offset
+        search found no DispUnit load; a computed-pointer text draw is still
+        an open private-RE claim. See ``docs/verification.md`` tier D.
         """
         raw = self.header[20:48]
         end = raw.find(b"\x00")

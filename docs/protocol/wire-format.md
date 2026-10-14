@@ -41,7 +41,7 @@ explicitly overridden.
 | Region  | Content                                                            |
 | ------- | ------------------------------------------------------------------ |
 | 0–12    | Meters / status (S-meter, Po, SWR, voltage, ATU, version bytes, …) |
-| 13–47   | Unknown / partially RE'd — exposed as raw bytes only in v1         |
+| 13–47   | Raw only (**B4** / **O1**). Body rolls a C string at 20–47. Head use of that window is not a v1 decode |
 | 48–367  | **160 × uint16** FFT bins (relative, not calibrated dBm)           |
 | 368–371 | CRC                                                                |
 

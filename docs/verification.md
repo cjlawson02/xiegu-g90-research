@@ -30,7 +30,7 @@ below says **A**.
 | Head 96 B / body 372 B; sync `55 AA` on head TX                               | golden lengths, encode/decode                                         |
 | Mode maps `1.78` (0–5) vs `1.79+` (0–7, L-D/U-D inserted)                     | `TestModes`, `test_classic_gsoc_mishap`                               |
 | Filter encode ÷25 vs ÷50                                                      | `TestFilter`                                                          |
-| `fft_scale` 1–10 vs AUTO-only                                                 | `TestFftScale`                                                        |
+| `fft_scale` 1–10 vs library encode of `1` only on `1.79+`                     | `TestFftScale`, `test_179_rejects_manual_fft`                         |
 | `Profile.parse("1.81")` ≡ `1.79`; identical wire bytes                        | `test_181_aliases_179`, `test_181_and_179_encode_identical`           |
 | GSOC mishap: USB wire `1` under `1.78` → **L-D** on `1.79` decode, CRC OK     | `test_classic_gsoc_mishap`                                            |
 | Head control packing (NB/SQL/RIT/… overlays)                                  | `test_head_controls_pack_and_overlay`                                 |
@@ -60,7 +60,7 @@ traffic**, not that your radio today will PASS the full ladder.
 | ----------------------------------------------------- | ------------------------------------------------------------------------ |
 | v1.81 body CRC-ok; `info6=0x81`; voltage ≈ 13.5 V     | `body_181_live.hex`                                                      |
 | Fake-head TX ↔ body RX round-trip (USB @ 14.225 MHz)  | `head_181_fake_usb.hex` + body fixtures                                  |
-| Body header bytes 20–47 roll ASCII (`cw_text` window) | `body_181_fake_rx_{early,partial,late}.hex`, `body_181_effect_cw_E*.hex` |
+| Body header bytes 20–47 roll ASCII (live window only) | `body_181_fake_rx_{early,partial,late}.hex`, `body_181_effect_cw_E*.hex` |
 | Live fake-head body CRC-ok @ 14.225 MHz               | `body_181_live_head_20260727.hex`                                        |
 | Effect-diff ladder summary (8 steps, Po=0)            | `effect_diff_manifest_20260727.jsonl`                                    |
 | Effect-diff CW `"E "` march in header                 | `body_181_effect_cw_E*.hex`                                              |
@@ -95,6 +95,21 @@ Gray binaries and decompilation dumps are intentionally absent here; public
 summaries live in [firmware-break.md](protocol/firmware-break.md) and
 [control-spec.md](protocol/control-spec.md). Re-check the quiet ladder when
 Xiegu ships new firmware.
+
+**O1** (static RE, MainUnit and DispUnit 1.81, 2026-10-13): bytes 13–15 are
+written as zero with the word at offset 12; 16–19 have no writer found.
+Bytes 20–47 are a rolling NUL-terminated string. A literal-offset search found
+no DispUnit load of 13–47. An earlier private pass reports a text draw from
+byte 20 through a computed pointer when a head-control bit is set, so “the
+head never reads 20–47” is not settled. GSOC’s remote unpacker does not read
+the window. **B4** stays raw. Live fixtures show the ASCII roll only; Morse
+attribution stays static-RE, not a v1 semantic decode.
+
+**Profiles** (static RE, MainUnit 1.78b01, 1.79b02, and 1.81): no new codec
+profile through 1.81. The body indexes each filter edge by the raw byte and
+does not redo ÷25 or ÷50. Post-break bodies apply ``fft_scale`` nibbles 1–10
+and clamp 11–15 to 10. **H5** remains the library encode limit, not a body
+reject.
 
 ---
 

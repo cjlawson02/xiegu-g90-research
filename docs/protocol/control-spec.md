@@ -34,7 +34,7 @@ Implementations should cite **clauses + tests below**, not narrative RE notes al
 
 | ID       | Item                                 | Notes                                                   |
 | -------- | ------------------------------------ | ------------------------------------------------------- |
-| **O1**   | Body header bytes **13–47**          | Partial static RE; not normative for v1 semantic decode |
+| **O1**   | Body header bytes **13–47**          | Tier D: 13–15 stored as zero; 20–47 is a rolling C string. Not a v1 decode (**B4**). Head text use is unsettled |
 | **O2**   | Absolute FFT **dBm**                 | Stride settled (160×u16); `fft_fingerprint` only        |
 | **H1b**  | Stock-head TX/UI field match (Y-tap) | Optional confirmation                                   |
 | TX / PTT | RF keying, ATU tune, VOX arm         | No antenna policy → not in v1 API                       |
@@ -88,7 +88,7 @@ Normative packing lives in `g90_codec.encode_head_frame` / `HeadControl.encode`.
 | **H2** | **Filter `1.78`:** high=`(Hz−125)/25`, low=`(Hz−100)/25` | golden `TestFilter`                    |
 | **H3** | **Filter `1.79+`:** both edges `(Hz−50)/50`              | golden `TestFilter`                    |
 | **H4** | **`fft_scale` `1.78`:** 1=AUTO, 2..10 manual             | golden `TestFftScale`                  |
-| **H5** | **`fft_scale` `1.79+`:** only `1` (AUTO)                 | golden `test_179_rejects_manual_fft`   |
+| **H5** | **`fft_scale` `1.79+` encode:** only `1` (AUTO). Body still applies 1–10 (tier D); the library does not emit 2–10 | golden `test_179_rejects_manual_fft` |
 | **H6** | Encode → decode round-trip                               | `TestControlRoundTrip`; golden         |
 | **H7** | Default encode applies **RX-only guard** (§7)            | golden `test_rx_only_guard_clears_ptt` |
 

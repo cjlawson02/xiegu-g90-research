@@ -22,7 +22,7 @@ Fork tracks and what you can ship from **public artifacts only**. See
 | Body proof     | `g90-effect-diff`, fixtures `body_181_*.hex`                         |
 
 **Not proven in CI:** filter BPF table indexing (tier **D**), bytes 13–47 semantics
-(**O1** open), hardware-in-loop on your bench.
+(**O1** open; 20–47 is a rolling string, not a v1 decode), hardware-in-loop on your bench.
 
 ## Track B — CI-V / Hamlib contributor
 
@@ -54,7 +54,7 @@ Reference: [Xiegu G90 CI-V PDF](https://xiegu.eu/sdm_downloads/g90-civ-reference
 | --------------------------- | ----------------------------- |
 | No GSOC hardware validation | —                             |
 | `1.81` ≡ `1.79` alias       | **D** + P2/P4 encode identity |
-| Body bytes 13–47            | **O1** open                   |
+| Body bytes 13–47            | **O1** open; raw only (**B4**). Rolling string at 20–47 is not a v1 decode |
 | BPF/filter table proof      | **D**                         |
 | Embedded port / BSP         | Not in tree                   |
 | TX/PTT paths                | Blocked by design (**S1–S4**) |

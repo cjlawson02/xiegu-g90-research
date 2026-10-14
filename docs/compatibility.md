@@ -40,7 +40,7 @@ What changed is **payload meaning**:
 | -------------- | ------------------------------------- | ------------------------------------------- |
 | Mode enum      | 0–5 (LSB…NFM)                         | 0–7 with **L-D/U-D inserted** after LSB/USB |
 | Filter packing | `(Hz−125)/25` high, `(Hz−100)/25` low | **Both** edges `(Hz−50)/50`                 |
-| Spectrum zoom  | Manual 1–10                           | **AUTO only** (`fft_scale = 1`)             |
+| Spectrum zoom  | Manual 1–10                           | Library encodes **1** only (**H5**). Body still applies 1–10 |
 
 A frozen GSOC still sends 1.78 mode numbers on a 1.81 body. USB (wire value 1
 on 1.78) becomes **L-D** on a 1.79+ body. Every non-LSB mode and filter edge

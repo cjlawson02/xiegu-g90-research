@@ -119,7 +119,8 @@ def validate_fft_scale(profile: Profile | str, value: int) -> int:
     """Clamp / validate ``fft_scale`` (byte 19 / 35).
 
     * **1.78:** 1 = AUTO, 2–10 manual
-    * **1.79+:** forced AUTO — only ``1`` is reachable (UI clamp ``[1,1]``)
+    * **1.79+:** library encode allows only ``1`` (**H5**). The body still
+      applies 1–10; this function does not emit those values.
     """
     p = Profile.parse(profile)
     v = int(value) & 0x0F
@@ -129,6 +130,6 @@ def validate_fft_scale(profile: Profile | str, value: int) -> int:
         return v
     if v != 1:
         raise ValueError(
-            f"fft_scale {value} invalid for 1.79+ (forced AUTO=1; UI clamp [1,1])"
+            f"fft_scale {value} invalid for 1.79+ library encode (H5 allows only 1)"
         )
     return 1
